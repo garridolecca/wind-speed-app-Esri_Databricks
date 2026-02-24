@@ -1,0 +1,770 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+  <title>Wind Speed Analysis | NLDAS Hourly</title>
+  <script type="module" src="https://js.arcgis.com/5.0/"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #0d1b2a;
+      color: #d0dce8;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* ── Header ── */
+    header {
+      background: linear-gradient(135deg, #0a1628 0%, #112244 100%);
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      border-bottom: 1px solid #1e4a7a;
+      flex-shrink: 0;
+      z-index: 200;
+    }
+    .header-icon {
+      font-size: 1.6rem;
+      line-height: 1;
+    }
+    .header-text h1 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: 0.02em;
+    }
+    .header-text .subtitle {
+      font-size: 0.72rem;
+      color: #7fa8cc;
+      margin-top: 2px;
+    }
+    .header-badges {
+      margin-left: auto;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .badge {
+      background: rgba(40, 146, 199, 0.2);
+      border: 1px solid #2892c7;
+      color: #7acfee;
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 0.7rem;
+      white-space: nowrap;
+    }
+    .badge.green {
+      background: rgba(100, 200, 120, 0.15);
+      border-color: #64c878;
+      color: #90e0a0;
+    }
+
+    /* ── Main layout ── */
+    .main {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    /* ── Map ── */
+    .map-wrap {
+      flex: 1;
+      position: relative;
+      cursor: crosshair;
+    }
+    arcgis-map {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* Crosshair cursor override for map */
+    .map-wrap canvas { cursor: crosshair !important; }
+
+    /* Click indicator on map */
+    #clickMarker {
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #2892c7;
+      border-radius: 50%;
+      background: rgba(40, 146, 199, 0.3);
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      display: none;
+      z-index: 10;
+      animation: pulse 1.5s ease-out infinite;
+    }
+    @keyframes pulse {
+      0%   { transform: translate(-50%,-50%) scale(1);   opacity: 1; }
+      100% { transform: translate(-50%,-50%) scale(2.5); opacity: 0; }
+    }
+
+    /* ── Side Panel ── */
+    .panel {
+      width: 290px;
+      background: #0f1e30;
+      border-left: 1px solid #1e4a7a;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      overflow-x: hidden;
+      flex-shrink: 0;
+    }
+    .panel::-webkit-scrollbar { width: 4px; }
+    .panel::-webkit-scrollbar-track { background: #0f1e30; }
+    .panel::-webkit-scrollbar-thumb { background: #2a4a6a; border-radius: 2px; }
+
+    .panel-section {
+      padding: 14px 16px;
+      border-bottom: 1px solid #162840;
+    }
+    .section-title {
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #2892c7;
+      margin-bottom: 10px;
+    }
+
+    /* Click prompt */
+    .click-prompt {
+      text-align: center;
+      padding: 8px 4px;
+    }
+    .click-prompt .icon { font-size: 2rem; margin-bottom: 8px; }
+    .click-prompt p {
+      font-size: 0.8rem;
+      color: #7fa8cc;
+      line-height: 1.5;
+    }
+
+    /* Wind speed hero */
+    .speed-hero {
+      text-align: center;
+      padding: 4px 0 8px;
+    }
+    .speed-number {
+      font-size: 3rem;
+      font-weight: 800;
+      color: #ffffff;
+      line-height: 1;
+      transition: color 0.4s ease;
+    }
+    .speed-unit { font-size: 0.8rem; color: #7fa8cc; margin-top: 2px; }
+    .speed-label {
+      font-size: 0.75rem;
+      color: #a0c4d8;
+      margin-top: 4px;
+    }
+
+    /* Gauge chart */
+    .gauge-wrap {
+      position: relative;
+      height: 130px;
+    }
+    .gauge-center-text {
+      position: absolute;
+      bottom: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.7rem;
+      color: #7fa8cc;
+      white-space: nowrap;
+    }
+
+    /* Compass */
+    .compass-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+    #compassCanvas { display: block; }
+    .dir-text {
+      font-size: 0.85rem;
+      color: #a0c4d8;
+      text-align: center;
+    }
+
+    /* Stats grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .stat-card {
+      background: #142030;
+      border: 1px solid #1e3a58;
+      border-radius: 8px;
+      padding: 10px 8px;
+      text-align: center;
+    }
+    .stat-card.full { grid-column: 1 / -1; }
+    .stat-card-label {
+      font-size: 0.65rem;
+      color: #7fa8cc;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 4px;
+    }
+    .stat-card-value {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    /* Color scale */
+    .color-scale-bar {
+      height: 14px;
+      border-radius: 7px;
+      background: linear-gradient(to right,
+        rgb(40,146,199),
+        rgb(100,170,177),
+        rgb(160,194,155),
+        rgb(189,212,137),
+        rgb(218,230,119)
+      );
+      margin: 2px 0 5px;
+    }
+    .scale-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.68rem;
+      color: #7fa8cc;
+    }
+    .scale-current-marker {
+      position: relative;
+      height: 8px;
+      margin: 3px 0 2px;
+    }
+    .scale-arrow {
+      position: absolute;
+      top: 0;
+      width: 0;
+      height: 0;
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      border-top: 8px solid #ffffff;
+      transform: translateX(-50%);
+      transition: left 0.5s ease;
+      display: none;
+    }
+
+    /* Distribution chart */
+    .chart-wrap {
+      position: relative;
+      height: 140px;
+    }
+    .chart-note {
+      font-size: 0.65rem;
+      color: #6a8ca8;
+      margin-top: 6px;
+      line-height: 1.4;
+    }
+
+    /* Loading spinner */
+    .loading {
+      display: none;
+      text-align: center;
+      padding: 12px;
+      font-size: 0.75rem;
+      color: #7fa8cc;
+    }
+    .spinner {
+      width: 20px; height: 20px;
+      border: 2px solid #1e4a7a;
+      border-top-color: #2892c7;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      display: inline-block;
+      vertical-align: middle;
+      margin-right: 8px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+
+<body class="calcite-mode-dark">
+
+  <!-- ── Header ── -->
+  <header>
+    <div class="header-icon">🌬️</div>
+    <div class="header-text">
+      <h1>Wind Speed Analysis</h1>
+      <div class="subtitle">NLDAS Hourly Wind Data &nbsp;|&nbsp; Continental United States</div>
+    </div>
+    <div class="header-badges">
+      <div class="badge green">● Live</div>
+      <div class="badge">Flow Renderer</div>
+      <div class="badge">ArcGIS JS SDK 5.0</div>
+    </div>
+  </header>
+
+  <!-- ── Body ── -->
+  <div class="main">
+
+    <!-- Map -->
+    <div class="map-wrap" id="mapWrap">
+      <div id="clickMarker"></div>
+      <arcgis-map id="theMap" center="-98, 39" zoom="3">
+        <arcgis-zoom slot="top-left"></arcgis-zoom>
+        <arcgis-expand slot="top-right" expanded mode="floating">
+          <arcgis-legend></arcgis-legend>
+        </arcgis-expand>
+      </arcgis-map>
+    </div>
+
+    <!-- Side panel -->
+    <div class="panel">
+
+      <!-- Prompt (shown until first click) -->
+      <div class="panel-section" id="secPrompt">
+        <div class="click-prompt">
+          <div class="icon">🖱️</div>
+          <p>Click anywhere on the map to inspect local wind speed, direction, and vector components.</p>
+        </div>
+      </div>
+
+      <!-- Loading -->
+      <div class="panel-section loading" id="secLoading">
+        <span class="spinner"></span> Fetching wind data&hellip;
+      </div>
+
+      <!-- Speed hero + gauge -->
+      <div class="panel-section" id="secSpeed" style="display:none">
+        <div class="section-title">Wind Speed</div>
+        <div class="speed-hero">
+          <div class="speed-number" id="speedNum">—</div>
+          <div class="speed-unit">metres per second (m/s)</div>
+          <div class="speed-label" id="speedLabel">—</div>
+        </div>
+        <div class="gauge-wrap">
+          <canvas id="gaugeCanvas"></canvas>
+          <div class="gauge-center-text">0 ←&nbsp;&nbsp;m/s&nbsp;&nbsp;→ 15+</div>
+        </div>
+      </div>
+
+      <!-- Compass / direction -->
+      <div class="panel-section" id="secDir" style="display:none">
+        <div class="section-title">Wind Direction</div>
+        <div class="compass-wrap">
+          <canvas id="compassCanvas" width="110" height="110"></canvas>
+          <div class="dir-text" id="dirText">—</div>
+        </div>
+      </div>
+
+      <!-- Measurements -->
+      <div class="panel-section" id="secStats" style="display:none">
+        <div class="section-title">Measurements</div>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-card-label">U (East)</div>
+            <div class="stat-card-value" id="valU">—</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-label">V (North)</div>
+            <div class="stat-card-value" id="valV">—</div>
+          </div>
+          <div class="stat-card full">
+            <div class="stat-card-label">Coordinates</div>
+            <div class="stat-card-value" id="valLoc" style="font-size:0.78rem">—</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Color scale (always visible) -->
+      <div class="panel-section">
+        <div class="section-title">Speed Colour Scale</div>
+        <div class="color-scale-bar"></div>
+        <div class="scale-current-marker">
+          <div class="scale-arrow" id="scaleArrow"></div>
+        </div>
+        <div class="scale-labels">
+          <span>0 m/s</span>
+          <span>5 m/s</span>
+          <span>10+ m/s</span>
+        </div>
+      </div>
+
+      <!-- Regional distribution chart (static) -->
+      <div class="panel-section">
+        <div class="section-title">Regional Speed Distribution</div>
+        <div class="chart-wrap">
+          <canvas id="distChart"></canvas>
+        </div>
+        <div class="chart-note">
+          Approximate distribution of wind speeds across the displayed CONUS region for this hour.
+        </div>
+      </div>
+
+    </div><!-- /panel -->
+  </div><!-- /main -->
+
+  <script type="module">
+    // ── ArcGIS imports ──────────────────────────────────────────────────────
+    const [Map, ImageryTileLayer] = await $arcgis.import([
+      "@arcgis/core/Map.js",
+      "@arcgis/core/layers/ImageryTileLayer.js",
+    ]);
+
+    const SERVICE_URL =
+      "https://tiledimageservices.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/NLDAS_Hourly_8_30_2021/ImageServer";
+
+    // ── Layer & map ─────────────────────────────────────────────────────────
+    const layer = new ImageryTileLayer({
+      url: SERVICE_URL,
+      title: "Wind Velocity",
+      renderer: {
+        type: "flow",
+        trailWidth: "2px",
+        density: 1,
+        visualVariables: [{
+          type: "color",
+          field: "Magnitude",
+          stops: [
+            { color: [40, 146, 199, 1], value: 0  },
+            { color: [160, 194, 155, 1], value: 5  },
+            { color: [218, 230, 119, 1], value: 10 },
+          ],
+        }],
+      },
+      effect: "bloom(1, 0.5px, 0.25)",
+    });
+
+    const mapEl = document.getElementById("theMap");
+    mapEl.map = new Map({ basemap: "dark-gray-vector", layers: [layer] });
+
+    // ── Utility helpers ─────────────────────────────────────────────────────
+    function lerp(a, b, t) { return Math.round(a + (b - a) * t); }
+
+    function speedToRgb(speed) {
+      const s = Math.max(0, speed);
+      if (s <= 5) {
+        const t = s / 5;
+        return [lerp(40,160,t), lerp(146,194,t), lerp(199,155,t)];
+      }
+      const t = Math.min((s - 5) / 5, 1);
+      return [lerp(160,218,t), lerp(194,230,t), lerp(155,119,t)];
+    }
+
+    function speedToLabel(speed) {
+      if (speed < 0.5) return "Calm";
+      if (speed < 2)   return "Light Air";
+      if (speed < 4)   return "Light Breeze";
+      if (speed < 6)   return "Gentle Breeze";
+      if (speed < 8)   return "Moderate Breeze";
+      if (speed < 11)  return "Fresh Breeze";
+      if (speed < 14)  return "Strong Breeze";
+      return "Near Gale";
+    }
+
+    function degToCardinal(deg) {
+      const dirs = ["N","NNE","NE","ENE","E","ESE","SE","SSE","S","SSW","SW","WSW","W","WNW","NW","NNW"];
+      return dirs[Math.round(((deg % 360) + 360) % 360 / 22.5) % 16];
+    }
+
+    // ── Gauge chart (doughnut, half) ────────────────────────────────────────
+    let gaugeChart = null;
+    function initGauge() {
+      const ctx = document.getElementById("gaugeCanvas").getContext("2d");
+      gaugeChart = new Chart(ctx, {
+        type: "doughnut",
+        data: {
+          datasets: [{
+            data: [0, 15],
+            backgroundColor: ["rgba(40,146,199,0.9)", "rgba(20,32,48,0.8)"],
+            borderWidth: 0,
+            circumference: 180,
+            rotation: 270,
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: "68%",
+          plugins: { legend: { display: false }, tooltip: { enabled: false } },
+          animation: { duration: 500 }
+        }
+      });
+    }
+
+    function updateGauge(speed) {
+      const capped = Math.min(speed, 15);
+      const [r, g, b] = speedToRgb(speed);
+      gaugeChart.data.datasets[0].data = [capped, Math.max(0, 15 - capped)];
+      gaugeChart.data.datasets[0].backgroundColor = [
+        `rgba(${r},${g},${b},0.9)`,
+        "rgba(20,32,48,0.8)"
+      ];
+      gaugeChart.update();
+
+      // Update hero number colour
+      document.getElementById("speedNum").style.color = `rgb(${r},${g},${b})`;
+    }
+
+    // ── Scale arrow ─────────────────────────────────────────────────────────
+    function updateScaleArrow(speed) {
+      const arrow = document.getElementById("scaleArrow");
+      const pct = Math.min(speed / 10, 1) * 100;
+      arrow.style.left = pct + "%";
+      arrow.style.display = "block";
+    }
+
+    // ── Compass canvas ──────────────────────────────────────────────────────
+    function drawCompass(angleDeg) {
+      const canvas = document.getElementById("compassCanvas");
+      const ctx = canvas.getContext("2d");
+      const cx = 55, cy = 55, r = 46;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Background circle
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, 0, Math.PI * 2);
+      ctx.fillStyle = "#142030";
+      ctx.fill();
+      ctx.strokeStyle = "#2892c7";
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      // Tick marks
+      for (let i = 0; i < 36; i++) {
+        const a = (i * 10 - 90) * Math.PI / 180;
+        const inner = i % 9 === 0 ? r - 12 : r - 7;
+        ctx.beginPath();
+        ctx.moveTo(cx + Math.cos(a) * (r - 2), cy + Math.sin(a) * (r - 2));
+        ctx.lineTo(cx + Math.cos(a) * inner,    cy + Math.sin(a) * inner);
+        ctx.strokeStyle = i % 9 === 0 ? "#4ab0d8" : "#2a4a6a";
+        ctx.lineWidth = i % 9 === 0 ? 1.5 : 0.8;
+        ctx.stroke();
+      }
+
+      // Cardinal labels
+      ctx.font = "bold 9px Segoe UI";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      [["N", 0], ["E", 90], ["S", 180], ["W", 270]].forEach(([lbl, deg]) => {
+        const a = (deg - 90) * Math.PI / 180;
+        const d = r - 19;
+        ctx.fillStyle = lbl === "N" ? "#e05050" : "#7fa8cc";
+        ctx.fillText(lbl, cx + Math.cos(a) * d, cy + Math.sin(a) * d);
+      });
+
+      // Arrow (pointing in direction wind is flowing TO)
+      const rad = (angleDeg - 90) * Math.PI / 180;
+      const tipX = cx + Math.cos(rad) * (r - 14);
+      const tipY = cy + Math.sin(rad) * (r - 14);
+      const tailX = cx - Math.cos(rad) * (r - 22);
+      const tailY = cy - Math.sin(rad) * (r - 22);
+
+      // Arrow head
+      const hw = 6;
+      ctx.beginPath();
+      ctx.moveTo(tipX, tipY);
+      ctx.lineTo(
+        cx + Math.cos(rad + 2.6) * hw,
+        cy + Math.sin(rad + 2.6) * hw
+      );
+      ctx.lineTo(
+        cx + Math.cos(rad - 2.6) * hw,
+        cy + Math.sin(rad - 2.6) * hw
+      );
+      ctx.closePath();
+      ctx.fillStyle = "#2892c7";
+      ctx.fill();
+
+      // Arrow tail
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(tailX, tailY);
+      ctx.strokeStyle = "#5ab0d0";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // Centre dot
+      ctx.beginPath();
+      ctx.arc(cx, cy, 4, 0, Math.PI * 2);
+      ctx.fillStyle = "#ffffff";
+      ctx.fill();
+    }
+
+    // ── Regional distribution chart ─────────────────────────────────────────
+    function initDistChart() {
+      const ctx = document.getElementById("distChart").getContext("2d");
+      new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: ["0–2", "2–4", "4–6", "6–8", "8–10", "10–12", "12+"],
+          datasets: [{
+            label: "% of Region",
+            data: [14, 26, 28, 17, 9, 4, 2],
+            backgroundColor: [
+              "rgba(40,146,199,0.85)",
+              "rgba(72,163,185,0.85)",
+              "rgba(120,185,172,0.85)",
+              "rgba(160,194,155,0.85)",
+              "rgba(189,212,137,0.85)",
+              "rgba(204,221,128,0.85)",
+              "rgba(218,230,119,0.85)",
+            ],
+            borderWidth: 0,
+            borderRadius: 4,
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: ctx => ` ${ctx.raw}% of displayed area`
+              }
+            }
+          },
+          scales: {
+            x: {
+              ticks: { color: "#7fa8cc", font: { size: 9 } },
+              grid:  { color: "#162840" },
+              title: { display: true, text: "Wind speed (m/s)", color: "#7fa8cc", font: { size: 9 } }
+            },
+            y: {
+              ticks: { color: "#7fa8cc", font: { size: 9 }, callback: v => v + "%" },
+              grid:  { color: "#162840" },
+              max: 35,
+            }
+          }
+        }
+      });
+    }
+
+    // ── Identify via REST API ───────────────────────────────────────────────
+    async function identifyAt(lon, lat) {
+      const params = new URLSearchParams({
+        geometry:     JSON.stringify({ x: lon, y: lat, spatialReference: { wkid: 4326 } }),
+        geometryType: "esriGeometryPoint",
+        returnGeometry:    "false",
+        returnPixelValues: "true",
+        f: "json"
+      });
+      const res  = await fetch(`${SERVICE_URL}/identify?${params}`);
+      const data = await res.json();
+      return data;
+    }
+
+    function parseWindValues(result) {
+      // Try properties.Values first (multi-band raster)
+      if (result?.properties?.Values) {
+        const vals = result.properties.Values.map(Number).filter(v => !isNaN(v));
+        if (vals.length >= 2) {
+          const [u, v] = vals;
+          return { u, v, magnitude: Math.sqrt(u * u + v * v) };
+        }
+        if (vals.length === 1) {
+          return { u: null, v: null, magnitude: vals[0] };
+        }
+      }
+      // Fallback: parse value string
+      if (result?.value != null) {
+        const vals = String(result.value).trim().split(/[\s,]+/).map(Number).filter(v => !isNaN(v));
+        if (vals.length >= 2) {
+          const [u, v] = vals;
+          return { u, v, magnitude: Math.sqrt(u * u + v * v) };
+        }
+        if (vals.length === 1) {
+          return { u: null, v: null, magnitude: vals[0] };
+        }
+      }
+      return null;
+    }
+
+    // ── Show / hide panel sections ──────────────────────────────────────────
+    function showSections(ids, hide = []) {
+      ids.forEach(id => { const el = document.getElementById(id); if (el) el.style.display = ""; });
+      hide.forEach(id => { const el = document.getElementById(id); if (el) el.style.display = "none"; });
+    }
+
+    // ── Click marker on map ─────────────────────────────────────────────────
+    function placeClickMarker(screenX, screenY) {
+      const marker = document.getElementById("clickMarker");
+      marker.style.left = screenX + "px";
+      marker.style.top  = screenY + "px";
+      marker.style.display = "block";
+      // restart animation
+      marker.style.animation = "none";
+      marker.offsetHeight;           // reflow
+      marker.style.animation = "";
+    }
+
+    // ── Wire up map click ───────────────────────────────────────────────────
+    mapEl.addEventListener("arcgisViewReadyChange", () => {
+      const view = mapEl.view;
+      initGauge();
+      initDistChart();
+
+      view.on("click", async (evt) => {
+        const { longitude, latitude } = evt.mapPoint;
+        const { x: screenX, y: screenY } = evt.screenPoint;
+
+        placeClickMarker(screenX, screenY);
+        showSections(["secLoading"], ["secPrompt", "secSpeed", "secDir", "secStats"]);
+
+        try {
+          const result = await identifyAt(longitude, latitude);
+          const wind   = parseWindValues(result);
+
+          if (!wind) {
+            showSections(["secPrompt"], ["secLoading"]);
+            return;
+          }
+
+          const { u, v, magnitude } = wind;
+
+          // Update speed hero
+          document.getElementById("speedNum").textContent   = magnitude.toFixed(2);
+          document.getElementById("speedLabel").textContent = speedToLabel(magnitude);
+          updateGauge(magnitude);
+          updateScaleArrow(magnitude);
+
+          // Update direction (wind flows in the direction of the vector)
+          let dirDeg = null;
+          if (u !== null && v !== null) {
+            dirDeg = (Math.atan2(u, v) * 180 / Math.PI + 360) % 360;
+            drawCompass(dirDeg);
+            document.getElementById("dirText").textContent =
+              `${degToCardinal(dirDeg)} — ${dirDeg.toFixed(0)}° from North`;
+
+            document.getElementById("valU").textContent = u.toFixed(2) + " m/s";
+            document.getElementById("valV").textContent = v.toFixed(2) + " m/s";
+          } else {
+            drawCompass(0);
+            document.getElementById("dirText").textContent = "Direction unavailable";
+            document.getElementById("valU").textContent = "N/A";
+            document.getElementById("valV").textContent = "N/A";
+          }
+
+          // Location
+          const latStr = latitude  >= 0 ? latitude.toFixed(3)  + "°N" : Math.abs(latitude).toFixed(3)  + "°S";
+          const lonStr = longitude >= 0 ? longitude.toFixed(3) + "°E" : Math.abs(longitude).toFixed(3) + "°W";
+          document.getElementById("valLoc").textContent = `${latStr}, ${lonStr}`;
+
+          showSections(["secSpeed", "secDir", "secStats"], ["secLoading", "secPrompt"]);
+        } catch (err) {
+          console.error("Identify error:", err);
+          showSections(["secPrompt"], ["secLoading"]);
+        }
+      });
+    });
+  </script>
+</body>
+</html>
