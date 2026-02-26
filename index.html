@@ -32,10 +32,7 @@
       flex-shrink: 0;
       z-index: 200;
     }
-    .header-icon {
-      font-size: 1.6rem;
-      line-height: 1;
-    }
+    .header-icon { font-size: 1.6rem; line-height: 1; }
     .header-text h1 {
       font-size: 1.25rem;
       font-weight: 700;
@@ -67,30 +64,20 @@
       border-color: #64c878;
       color: #90e0a0;
     }
+    .badge.orange {
+      background: rgba(255, 165, 0, 0.15);
+      border-color: #ffa500;
+      color: #ffc55a;
+    }
 
     /* ── Main layout ── */
-    .main {
-      display: flex;
-      flex: 1;
-      overflow: hidden;
-    }
+    .main { display: flex; flex: 1; overflow: hidden; }
 
     /* ── Map ── */
-    .map-wrap {
-      flex: 1;
-      position: relative;
-      cursor: crosshair;
-    }
-    arcgis-map {
-      width: 100%;
-      height: 100%;
-      display: block;
-    }
-
-    /* Crosshair cursor override for map */
+    .map-wrap { flex: 1; position: relative; cursor: crosshair; }
+    arcgis-map { width: 100%; height: 100%; display: block; }
     .map-wrap canvas { cursor: crosshair !important; }
 
-    /* Click indicator on map */
     #clickMarker {
       position: absolute;
       width: 16px;
@@ -107,6 +94,23 @@
     @keyframes pulse {
       0%   { transform: translate(-50%,-50%) scale(1);   opacity: 1; }
       100% { transform: translate(-50%,-50%) scale(2.5); opacity: 0; }
+    }
+
+    /* ── Station loading toast ── */
+    #stationToast {
+      position: absolute;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(10, 22, 40, 0.92);
+      border: 1px solid #2892c7;
+      color: #7acfee;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 0.72rem;
+      z-index: 100;
+      display: none;
+      pointer-events: none;
     }
 
     /* ── Side Panel ── */
@@ -137,23 +141,11 @@
       margin-bottom: 10px;
     }
 
-    /* Click prompt */
-    .click-prompt {
-      text-align: center;
-      padding: 8px 4px;
-    }
+    .click-prompt { text-align: center; padding: 8px 4px; }
     .click-prompt .icon { font-size: 2rem; margin-bottom: 8px; }
-    .click-prompt p {
-      font-size: 0.8rem;
-      color: #7fa8cc;
-      line-height: 1.5;
-    }
+    .click-prompt p { font-size: 0.8rem; color: #7fa8cc; line-height: 1.5; }
 
-    /* Wind speed hero */
-    .speed-hero {
-      text-align: center;
-      padding: 4px 0 8px;
-    }
+    .speed-hero { text-align: center; padding: 4px 0 8px; }
     .speed-number {
       font-size: 3rem;
       font-weight: 800;
@@ -162,17 +154,9 @@
       transition: color 0.4s ease;
     }
     .speed-unit { font-size: 0.8rem; color: #7fa8cc; margin-top: 2px; }
-    .speed-label {
-      font-size: 0.75rem;
-      color: #a0c4d8;
-      margin-top: 4px;
-    }
+    .speed-label { font-size: 0.75rem; color: #a0c4d8; margin-top: 4px; }
 
-    /* Gauge chart */
-    .gauge-wrap {
-      position: relative;
-      height: 130px;
-    }
+    .gauge-wrap { position: relative; height: 130px; }
     .gauge-center-text {
       position: absolute;
       bottom: 8px;
@@ -183,26 +167,11 @@
       white-space: nowrap;
     }
 
-    /* Compass */
-    .compass-wrap {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 6px;
-    }
+    .compass-wrap { display: flex; flex-direction: column; align-items: center; gap: 6px; }
     #compassCanvas { display: block; }
-    .dir-text {
-      font-size: 0.85rem;
-      color: #a0c4d8;
-      text-align: center;
-    }
+    .dir-text { font-size: 0.85rem; color: #a0c4d8; text-align: center; }
 
-    /* Stats grid */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-    }
+    .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     .stat-card {
       background: #142030;
       border: 1px solid #1e3a58;
@@ -218,36 +187,19 @@
       letter-spacing: 0.08em;
       margin-bottom: 4px;
     }
-    .stat-card-value {
-      font-size: 1rem;
-      font-weight: 700;
-      color: #ffffff;
-    }
+    .stat-card-value { font-size: 1rem; font-weight: 700; color: #ffffff; }
 
-    /* Color scale */
     .color-scale-bar {
       height: 14px;
       border-radius: 7px;
       background: linear-gradient(to right,
-        rgb(40,146,199),
-        rgb(100,170,177),
-        rgb(160,194,155),
-        rgb(189,212,137),
-        rgb(218,230,119)
+        rgb(40,146,199), rgb(100,170,177), rgb(160,194,155),
+        rgb(189,212,137), rgb(218,230,119)
       );
       margin: 2px 0 5px;
     }
-    .scale-labels {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.68rem;
-      color: #7fa8cc;
-    }
-    .scale-current-marker {
-      position: relative;
-      height: 8px;
-      margin: 3px 0 2px;
-    }
+    .scale-labels { display: flex; justify-content: space-between; font-size: 0.68rem; color: #7fa8cc; }
+    .scale-current-marker { position: relative; height: 8px; margin: 3px 0 2px; }
     .scale-arrow {
       position: absolute;
       top: 0;
@@ -261,26 +213,10 @@
       display: none;
     }
 
-    /* Distribution chart */
-    .chart-wrap {
-      position: relative;
-      height: 140px;
-    }
-    .chart-note {
-      font-size: 0.65rem;
-      color: #6a8ca8;
-      margin-top: 6px;
-      line-height: 1.4;
-    }
+    .chart-wrap { position: relative; height: 140px; }
+    .chart-note { font-size: 0.65rem; color: #6a8ca8; margin-top: 6px; line-height: 1.4; }
 
-    /* Loading spinner */
-    .loading {
-      display: none;
-      text-align: center;
-      padding: 12px;
-      font-size: 0.75rem;
-      color: #7fa8cc;
-    }
+    .loading { display: none; text-align: center; padding: 12px; font-size: 0.75rem; color: #7fa8cc; }
     .spinner {
       width: 20px; height: 20px;
       border: 2px solid #1e4a7a;
@@ -292,12 +228,80 @@
       margin-right: 8px;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Back button ── */
+    #btnNationalView {
+      display: none;
+      width: 100%;
+      padding: 7px 0;
+      background: rgba(40, 146, 199, 0.15);
+      border: 1px solid #2892c7;
+      border-radius: 6px;
+      color: #7acfee;
+      font-size: 0.75rem;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      cursor: pointer;
+      margin-top: 8px;
+      letter-spacing: 0.04em;
+    }
+    #btnNationalView:hover {
+      background: rgba(40, 146, 199, 0.3);
+      color: #ffffff;
+    }
+
+    /* ── Station info card ── */
+    .station-card {
+      background: #142030;
+      border: 1px solid #2892c7;
+      border-radius: 8px;
+      padding: 10px 12px;
+    }
+    .station-card .stn-name {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 6px;
+    }
+    .station-card .stn-state {
+      font-size: 0.7rem;
+      color: #7fa8cc;
+      margin-bottom: 8px;
+    }
+    .station-card .stn-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: #a0c4d8;
+      margin-bottom: 3px;
+    }
+    .station-card .stn-row span:last-child { color: #fff; font-weight: 600; }
+
+    /* ── Station list ── */
+    .station-list { list-style: none; padding: 0; margin: 0; }
+    .station-list li {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 0;
+      font-size: 0.75rem;
+      color: #a0c4d8;
+      border-bottom: 1px solid #162840;
+      cursor: pointer;
+    }
+    .station-list li:last-child { border-bottom: none; }
+    .station-list li:hover { color: #ffffff; }
+    .stn-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      border: 1.5px solid rgba(255,255,255,0.3);
+    }
   </style>
 </head>
 
 <body class="calcite-mode-dark">
 
-  <!-- ── Header ── -->
   <header>
     <div class="header-icon">🌬️</div>
     <div class="header-text">
@@ -307,16 +311,16 @@
     <div class="header-badges">
       <div class="badge green">● Live</div>
       <div class="badge">Flow Renderer</div>
+      <div class="badge orange" id="stationsBadge">Loading stations…</div>
       <div class="badge">ArcGIS JS SDK 5.0</div>
     </div>
   </header>
 
-  <!-- ── Body ── -->
   <div class="main">
 
-    <!-- Map -->
     <div class="map-wrap" id="mapWrap">
       <div id="clickMarker"></div>
+      <div id="stationToast"></div>
       <arcgis-map id="theMap" center="-96, 38.5" zoom="4">
         <arcgis-zoom slot="top-left"></arcgis-zoom>
         <arcgis-expand slot="top-right" expanded mode="floating">
@@ -325,20 +329,26 @@
       </arcgis-map>
     </div>
 
-    <!-- Side panel -->
     <div class="panel">
 
-      <!-- Prompt (shown until first click) -->
+      <!-- Prompt -->
       <div class="panel-section" id="secPrompt">
         <div class="click-prompt">
           <div class="icon">🖱️</div>
-          <p>Click anywhere on the map to inspect local wind speed, direction, and vector components.</p>
+          <p>Click anywhere on the map to inspect wind speed and direction — or click a station dot to see station data.</p>
         </div>
       </div>
 
       <!-- Loading -->
       <div class="panel-section loading" id="secLoading">
         <span class="spinner"></span> Fetching wind data&hellip;
+      </div>
+
+      <!-- Station detail card (shown on station click) -->
+      <div class="panel-section" id="secStation" style="display:none">
+        <div class="section-title">Weather Station</div>
+        <div class="station-card" id="stationCard"></div>
+        <button id="btnNationalView">&#8617; National View</button>
       </div>
 
       <!-- Speed hero + gauge -->
@@ -355,7 +365,7 @@
         </div>
       </div>
 
-      <!-- Compass / direction -->
+      <!-- Compass -->
       <div class="panel-section" id="secDir" style="display:none">
         <div class="section-title">Wind Direction</div>
         <div class="compass-wrap">
@@ -383,7 +393,7 @@
         </div>
       </div>
 
-      <!-- Color scale (always visible) -->
+      <!-- Color scale -->
       <div class="panel-section">
         <div class="section-title">Speed Colour Scale</div>
         <div class="color-scale-bar"></div>
@@ -397,7 +407,7 @@
         </div>
       </div>
 
-      <!-- Regional distribution chart (static) -->
+      <!-- Regional distribution chart -->
       <div class="panel-section">
         <div class="section-title">Regional Speed Distribution</div>
         <div class="chart-wrap">
@@ -408,21 +418,33 @@
         </div>
       </div>
 
-    </div><!-- /panel -->
-  </div><!-- /main -->
+      <!-- Station list -->
+      <div class="panel-section" id="secStationList">
+        <div class="section-title">Databricks Stations <span id="stationCount" style="color:#7fa8cc;font-weight:400"></span></div>
+        <ul class="station-list" id="stationList">
+          <li style="color:#6a8ca8;cursor:default"><span class="spinner"></span> Loading…</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
 
   <script type="module">
-    // ── ArcGIS imports ──────────────────────────────────────────────────────
-    const [Map, ImageryTileLayer] = await $arcgis.import([
+    const [Map, GraphicsLayer, Graphic, Point, SimpleMarkerSymbol, PopupTemplate, ImageryTileLayer] = await $arcgis.import([
       "@arcgis/core/Map.js",
+      "@arcgis/core/layers/GraphicsLayer.js",
+      "@arcgis/core/Graphic.js",
+      "@arcgis/core/geometry/Point.js",
+      "@arcgis/core/symbols/SimpleMarkerSymbol.js",
+      "@arcgis/core/PopupTemplate.js",
       "@arcgis/core/layers/ImageryTileLayer.js",
     ]);
 
     const SERVICE_URL =
       "https://tiledimageservices.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/NLDAS_Hourly_8_30_2021/ImageServer";
 
-    // ── Layer & map ─────────────────────────────────────────────────────────
-    const layer = new ImageryTileLayer({
+    // ── Wind flow layer ─────────────────────────────────────────────────────
+    const flowLayer = new ImageryTileLayer({
       url: SERVICE_URL,
       title: "Wind Velocity",
       renderer: {
@@ -442,8 +464,14 @@
       effect: "bloom(1, 0.5px, 0.25)",
     });
 
+    // ── Stations graphics layer ─────────────────────────────────────────────
+    const stationsLayer = new GraphicsLayer({ title: "Wind Stations (Databricks)" });
+
     const mapEl = document.getElementById("theMap");
-    mapEl.map = new Map({ basemap: "dark-gray-vector", layers: [layer] });
+    mapEl.map = new Map({
+      basemap: "dark-gray-vector",
+      layers: [flowLayer, stationsLayer],
+    });
 
     // ── Utility helpers ─────────────────────────────────────────────────────
     function lerp(a, b, t) { return Math.round(a + (b - a) * t); }
@@ -474,7 +502,7 @@
       return dirs[Math.round(((deg % 360) + 360) % 360 / 22.5) % 16];
     }
 
-    // ── Gauge chart (doughnut, half) ────────────────────────────────────────
+    // ── Gauge chart ─────────────────────────────────────────────────────────
     let gaugeChart = null;
     function initGauge() {
       const ctx = document.getElementById("gaugeCanvas").getContext("2d");
@@ -504,16 +532,12 @@
       const [r, g, b] = speedToRgb(speed);
       gaugeChart.data.datasets[0].data = [capped, Math.max(0, 15 - capped)];
       gaugeChart.data.datasets[0].backgroundColor = [
-        `rgba(${r},${g},${b},0.9)`,
-        "rgba(20,32,48,0.8)"
+        `rgba(${r},${g},${b},0.9)`, "rgba(20,32,48,0.8)"
       ];
       gaugeChart.update();
-
-      // Update hero number colour
       document.getElementById("speedNum").style.color = `rgb(${r},${g},${b})`;
     }
 
-    // ── Scale arrow ─────────────────────────────────────────────────────────
     function updateScaleArrow(speed) {
       const arrow = document.getElementById("scaleArrow");
       const pct = Math.min(speed / 10, 1) * 100;
@@ -521,14 +545,12 @@
       arrow.style.display = "block";
     }
 
-    // ── Compass canvas ──────────────────────────────────────────────────────
+    // ── Compass ─────────────────────────────────────────────────────────────
     function drawCompass(angleDeg) {
       const canvas = document.getElementById("compassCanvas");
       const ctx = canvas.getContext("2d");
       const cx = 55, cy = 55, r = 46;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      // Background circle
       ctx.beginPath();
       ctx.arc(cx, cy, r, 0, Math.PI * 2);
       ctx.fillStyle = "#142030";
@@ -536,8 +558,6 @@
       ctx.strokeStyle = "#2892c7";
       ctx.lineWidth = 1.5;
       ctx.stroke();
-
-      // Tick marks
       for (let i = 0; i < 36; i++) {
         const a = (i * 10 - 90) * Math.PI / 180;
         const inner = i % 9 === 0 ? r - 12 : r - 7;
@@ -545,76 +565,54 @@
         ctx.moveTo(cx + Math.cos(a) * (r - 2), cy + Math.sin(a) * (r - 2));
         ctx.lineTo(cx + Math.cos(a) * inner,    cy + Math.sin(a) * inner);
         ctx.strokeStyle = i % 9 === 0 ? "#4ab0d8" : "#2a4a6a";
-        ctx.lineWidth = i % 9 === 0 ? 1.5 : 0.8;
+        ctx.lineWidth   = i % 9 === 0 ? 1.5 : 0.8;
         ctx.stroke();
       }
-
-      // Cardinal labels
       ctx.font = "bold 9px Segoe UI";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
-      [["N", 0], ["E", 90], ["S", 180], ["W", 270]].forEach(([lbl, deg]) => {
+      [["N",0],["E",90],["S",180],["W",270]].forEach(([lbl,deg]) => {
         const a = (deg - 90) * Math.PI / 180;
         const d = r - 19;
         ctx.fillStyle = lbl === "N" ? "#e05050" : "#7fa8cc";
         ctx.fillText(lbl, cx + Math.cos(a) * d, cy + Math.sin(a) * d);
       });
-
-      // Arrow (pointing in direction wind is flowing TO)
-      const rad = (angleDeg - 90) * Math.PI / 180;
+      const rad  = (angleDeg - 90) * Math.PI / 180;
       const tipX = cx + Math.cos(rad) * (r - 14);
       const tipY = cy + Math.sin(rad) * (r - 14);
-      const tailX = cx - Math.cos(rad) * (r - 22);
-      const tailY = cy - Math.sin(rad) * (r - 22);
-
-      // Arrow head
       const hw = 6;
       ctx.beginPath();
       ctx.moveTo(tipX, tipY);
-      ctx.lineTo(
-        cx + Math.cos(rad + 2.6) * hw,
-        cy + Math.sin(rad + 2.6) * hw
-      );
-      ctx.lineTo(
-        cx + Math.cos(rad - 2.6) * hw,
-        cy + Math.sin(rad - 2.6) * hw
-      );
+      ctx.lineTo(cx + Math.cos(rad + 2.6) * hw, cy + Math.sin(rad + 2.6) * hw);
+      ctx.lineTo(cx + Math.cos(rad - 2.6) * hw, cy + Math.sin(rad - 2.6) * hw);
       ctx.closePath();
       ctx.fillStyle = "#2892c7";
       ctx.fill();
-
-      // Arrow tail
       ctx.beginPath();
       ctx.moveTo(cx, cy);
-      ctx.lineTo(tailX, tailY);
+      ctx.lineTo(cx - Math.cos(rad) * (r - 22), cy - Math.sin(rad) * (r - 22));
       ctx.strokeStyle = "#5ab0d0";
       ctx.lineWidth = 2;
       ctx.stroke();
-
-      // Centre dot
       ctx.beginPath();
       ctx.arc(cx, cy, 4, 0, Math.PI * 2);
       ctx.fillStyle = "#ffffff";
       ctx.fill();
     }
 
-    // ── Regional distribution chart ─────────────────────────────────────────
+    // ── Distribution chart ──────────────────────────────────────────────────
     function initDistChart() {
       const ctx = document.getElementById("distChart").getContext("2d");
       new Chart(ctx, {
         type: "bar",
         data: {
-          labels: ["0–2", "2–4", "4–6", "6–8", "8–10", "10–12", "12+"],
+          labels: ["0–2","2–4","4–6","6–8","8–10","10–12","12+"],
           datasets: [{
             label: "% of Region",
-            data: [14, 26, 28, 17, 9, 4, 2],
+            data: [14,26,28,17,9,4,2],
             backgroundColor: [
-              "rgba(40,146,199,0.85)",
-              "rgba(72,163,185,0.85)",
-              "rgba(120,185,172,0.85)",
-              "rgba(160,194,155,0.85)",
-              "rgba(189,212,137,0.85)",
-              "rgba(204,221,128,0.85)",
+              "rgba(40,146,199,0.85)","rgba(72,163,185,0.85)","rgba(120,185,172,0.85)",
+              "rgba(160,194,155,0.85)","rgba(189,212,137,0.85)","rgba(204,221,128,0.85)",
               "rgba(218,230,119,0.85)",
             ],
             borderWidth: 0,
@@ -626,11 +624,7 @@
           maintainAspectRatio: false,
           plugins: {
             legend: { display: false },
-            tooltip: {
-              callbacks: {
-                label: ctx => ` ${ctx.raw}% of displayed area`
-              }
-            }
+            tooltip: { callbacks: { label: ctx => ` ${ctx.raw}% of displayed area` } }
           },
           scales: {
             x: {
@@ -658,111 +652,200 @@
         f: "json"
       });
       const res  = await fetch(`${SERVICE_URL}/identify?${params}`);
-      const data = await res.json();
-      return data;
+      return res.json();
     }
 
     function parseWindValues(result) {
-      // Try properties.Values first (multi-band raster)
       if (result?.properties?.Values) {
         const vals = result.properties.Values.map(Number).filter(v => !isNaN(v));
-        if (vals.length >= 2) {
-          const [u, v] = vals;
-          return { u, v, magnitude: Math.sqrt(u * u + v * v) };
-        }
-        if (vals.length === 1) {
-          return { u: null, v: null, magnitude: vals[0] };
-        }
+        if (vals.length >= 2) { const [u,v] = vals; return { u, v, magnitude: Math.sqrt(u*u+v*v) }; }
+        if (vals.length === 1) return { u: null, v: null, magnitude: vals[0] };
       }
-      // Fallback: parse value string
       if (result?.value != null) {
         const vals = String(result.value).trim().split(/[\s,]+/).map(Number).filter(v => !isNaN(v));
-        if (vals.length >= 2) {
-          const [u, v] = vals;
-          return { u, v, magnitude: Math.sqrt(u * u + v * v) };
-        }
-        if (vals.length === 1) {
-          return { u: null, v: null, magnitude: vals[0] };
-        }
+        if (vals.length >= 2) { const [u,v] = vals; return { u, v, magnitude: Math.sqrt(u*u+v*v) }; }
+        if (vals.length === 1) return { u: null, v: null, magnitude: vals[0] };
       }
       return null;
     }
 
-    // ── Show / hide panel sections ──────────────────────────────────────────
     function showSections(ids, hide = []) {
       ids.forEach(id => { const el = document.getElementById(id); if (el) el.style.display = ""; });
       hide.forEach(id => { const el = document.getElementById(id); if (el) el.style.display = "none"; });
     }
 
-    // ── Click marker on map ─────────────────────────────────────────────────
     function placeClickMarker(screenX, screenY) {
       const marker = document.getElementById("clickMarker");
       marker.style.left = screenX + "px";
       marker.style.top  = screenY + "px";
       marker.style.display = "block";
-      // restart animation
       marker.style.animation = "none";
-      marker.offsetHeight;           // reflow
+      marker.offsetHeight;
       marker.style.animation = "";
     }
 
-    // ── Wire up map click ───────────────────────────────────────────────────
+    // ── Station panel card ──────────────────────────────────────────────────
+    function showStationCard(stn) {
+      const [r, g, b] = speedToRgb(stn.wind_speed_ms);
+      const card = document.getElementById("stationCard");
+      card.innerHTML = `
+        <div class="stn-name">${stn.name}</div>
+        <div class="stn-state">${stn.state} &nbsp;|&nbsp; Elev: ${stn.elevation_m} m</div>
+        <div class="stn-row"><span>Wind Speed</span><span style="color:rgb(${r},${g},${b})">${stn.wind_speed_ms.toFixed(1)} m/s — ${speedToLabel(stn.wind_speed_ms)}</span></div>
+        <div class="stn-row"><span>Direction</span><span>${degToCardinal(stn.wind_direction_deg)} (${stn.wind_direction_deg}°)</span></div>
+        <div class="stn-row"><span>Coordinates</span><span>${stn.latitude.toFixed(3)}°N, ${Math.abs(stn.longitude).toFixed(3)}°W</span></div>
+      `;
+      showSections(["secStation", "secSpeed", "secDir"], ["secPrompt", "secLoading"]);
+      document.getElementById("btnNationalView").style.display = "block";
+      document.getElementById("speedNum").textContent = stn.wind_speed_ms.toFixed(2);
+      document.getElementById("speedLabel").textContent = speedToLabel(stn.wind_speed_ms);
+      updateGauge(stn.wind_speed_ms);
+      updateScaleArrow(stn.wind_speed_ms);
+      drawCompass(stn.wind_direction_deg);
+      document.getElementById("dirText").textContent =
+        `${degToCardinal(stn.wind_direction_deg)} — ${stn.wind_direction_deg}° from North`;
+    }
+
+    // ── Build station graphics ──────────────────────────────────────────────
+    function buildStationGraphics(stations) {
+      stationsLayer.removeAll();
+      stations.forEach(stn => {
+        const graphic = new Graphic({
+          geometry: new Point({ longitude: stn.longitude, latitude: stn.latitude }),
+          symbol: new SimpleMarkerSymbol({
+            style: "circle",
+            color: [255, 100, 20, 240],
+            size: "14px",
+            outline: { color: [255, 255, 255, 255], width: 2 },
+          }),
+          attributes: stn,
+          popupTemplate: new PopupTemplate({
+            title: "{name}",
+            content: [
+              {
+                type: "fields",
+                fieldInfos: [
+                  { fieldName: "state",             label: "State" },
+                  { fieldName: "wind_speed_ms",     label: "Wind Speed (m/s)" },
+                  { fieldName: "wind_direction_deg", label: "Direction (°)" },
+                  { fieldName: "elevation_m",       label: "Elevation (m)" },
+                  { fieldName: "latitude",          label: "Latitude" },
+                  { fieldName: "longitude",         label: "Longitude" },
+                ],
+              },
+            ],
+          }),
+        });
+        stationsLayer.add(graphic);
+      });
+    }
+
+    // ── Populate sidebar station list ────────────────────────────────────────
+    function buildStationList(stations, view) {
+      const ul = document.getElementById("stationList");
+      document.getElementById("stationCount").textContent = `(${stations.length})`;
+      ul.innerHTML = "";
+      stations.forEach(stn => {
+        const [r, g, b] = speedToRgb(stn.wind_speed_ms);
+        const li = document.createElement("li");
+        li.innerHTML = `
+          <span class="stn-dot" style="background:rgb(255,100,20)"></span>
+          <span style="flex:1">${stn.name}</span>
+          <span style="color:rgb(${r},${g},${b});font-weight:600">${stn.wind_speed_ms.toFixed(1)} m/s</span>
+        `;
+        li.addEventListener("click", () => {
+          showStationCard(stn);
+          view.goTo({ center: [stn.longitude, stn.latitude], zoom: 7 });
+        });
+        ul.appendChild(li);
+      });
+    }
+
+    // ── Fetch stations from Databricks backend ───────────────────────────────
+    async function loadStations(view) {
+      const toast = document.getElementById("stationToast");
+      toast.textContent = "Loading stations from Databricks…";
+      toast.style.display = "block";
+      try {
+        const res = await fetch("/api/stations");
+        const stations = await res.json();
+        if (!Array.isArray(stations)) throw new Error(stations.error || "Invalid response");
+
+        buildStationGraphics(stations);
+        buildStationList(stations, view);
+
+        document.getElementById("stationsBadge").textContent = `${stations.length} Stations`;
+        document.getElementById("stationsBadge").className = "badge green";
+        toast.style.display = "none";
+
+        // Click on station graphic → show card
+        view.on("click", async (evt) => {
+          const hitResult = await view.hitTest(evt, { include: stationsLayer });
+          if (hitResult.results.length > 0) {
+            const stn = hitResult.results[0].graphic.attributes;
+            showStationCard(stn);
+            return;
+          }
+          // Else: wind raster identify
+          const { longitude, latitude } = evt.mapPoint;
+          const { x: screenX, y: screenY } = evt.screenPoint;
+          placeClickMarker(screenX, screenY);
+          showSections(["secLoading"], ["secPrompt","secSpeed","secDir","secStats","secStation"]);
+          try {
+            const result = await identifyAt(longitude, latitude);
+            const wind   = parseWindValues(result);
+            if (!wind) { showSections(["secPrompt"], ["secLoading"]); return; }
+            const { u, v, magnitude } = wind;
+            document.getElementById("speedNum").textContent   = magnitude.toFixed(2);
+            document.getElementById("speedLabel").textContent = speedToLabel(magnitude);
+            updateGauge(magnitude);
+            updateScaleArrow(magnitude);
+            let dirDeg = null;
+            if (u !== null && v !== null) {
+              dirDeg = (Math.atan2(u, v) * 180 / Math.PI + 360) % 360;
+              drawCompass(dirDeg);
+              document.getElementById("dirText").textContent =
+                `${degToCardinal(dirDeg)} — ${dirDeg.toFixed(0)}° from North`;
+              document.getElementById("valU").textContent = u.toFixed(2) + " m/s";
+              document.getElementById("valV").textContent = v.toFixed(2) + " m/s";
+            } else {
+              drawCompass(0);
+              document.getElementById("dirText").textContent = "Direction unavailable";
+              document.getElementById("valU").textContent = "N/A";
+              document.getElementById("valV").textContent = "N/A";
+            }
+            const latStr = latitude  >= 0 ? latitude.toFixed(3)  + "°N" : Math.abs(latitude).toFixed(3)  + "°S";
+            const lonStr = longitude >= 0 ? longitude.toFixed(3) + "°E" : Math.abs(longitude).toFixed(3) + "°W";
+            document.getElementById("valLoc").textContent = `${latStr}, ${lonStr}`;
+            showSections(["secSpeed","secDir","secStats"], ["secLoading","secPrompt","secStation"]);
+          } catch (err) {
+            console.error("Identify error:", err);
+            showSections(["secPrompt"], ["secLoading"]);
+          }
+        });
+
+      } catch (err) {
+        console.error("Station load error:", err);
+        document.getElementById("stationsBadge").textContent = "Stations unavailable";
+        document.getElementById("stationsBadge").style.borderColor = "#e05050";
+        document.getElementById("stationsBadge").style.color = "#e05050";
+        toast.style.display = "none";
+        document.getElementById("stationList").innerHTML =
+          `<li style="color:#e05050;cursor:default">Failed to load stations</li>`;
+      }
+    }
+
+    // ── Wire up map ready ───────────────────────────────────────────────────
     mapEl.addEventListener("arcgisViewReadyChange", () => {
       const view = mapEl.view;
       initGauge();
       initDistChart();
+      loadStations(view);
 
-      view.on("click", async (evt) => {
-        const { longitude, latitude } = evt.mapPoint;
-        const { x: screenX, y: screenY } = evt.screenPoint;
-
-        placeClickMarker(screenX, screenY);
-        showSections(["secLoading"], ["secPrompt", "secSpeed", "secDir", "secStats"]);
-
-        try {
-          const result = await identifyAt(longitude, latitude);
-          const wind   = parseWindValues(result);
-
-          if (!wind) {
-            showSections(["secPrompt"], ["secLoading"]);
-            return;
-          }
-
-          const { u, v, magnitude } = wind;
-
-          // Update speed hero
-          document.getElementById("speedNum").textContent   = magnitude.toFixed(2);
-          document.getElementById("speedLabel").textContent = speedToLabel(magnitude);
-          updateGauge(magnitude);
-          updateScaleArrow(magnitude);
-
-          // Update direction (wind flows in the direction of the vector)
-          let dirDeg = null;
-          if (u !== null && v !== null) {
-            dirDeg = (Math.atan2(u, v) * 180 / Math.PI + 360) % 360;
-            drawCompass(dirDeg);
-            document.getElementById("dirText").textContent =
-              `${degToCardinal(dirDeg)} — ${dirDeg.toFixed(0)}° from North`;
-
-            document.getElementById("valU").textContent = u.toFixed(2) + " m/s";
-            document.getElementById("valV").textContent = v.toFixed(2) + " m/s";
-          } else {
-            drawCompass(0);
-            document.getElementById("dirText").textContent = "Direction unavailable";
-            document.getElementById("valU").textContent = "N/A";
-            document.getElementById("valV").textContent = "N/A";
-          }
-
-          // Location
-          const latStr = latitude  >= 0 ? latitude.toFixed(3)  + "°N" : Math.abs(latitude).toFixed(3)  + "°S";
-          const lonStr = longitude >= 0 ? longitude.toFixed(3) + "°E" : Math.abs(longitude).toFixed(3) + "°W";
-          document.getElementById("valLoc").textContent = `${latStr}, ${lonStr}`;
-
-          showSections(["secSpeed", "secDir", "secStats"], ["secLoading", "secPrompt"]);
-        } catch (err) {
-          console.error("Identify error:", err);
-          showSections(["secPrompt"], ["secLoading"]);
-        }
+      document.getElementById("btnNationalView").addEventListener("click", () => {
+        view.goTo({ center: [-96, 38.5], zoom: 4 });
+        document.getElementById("btnNationalView").style.display = "none";
+        showSections(["secPrompt"], ["secStation", "secSpeed", "secDir", "secStats"]);
       });
     });
   </script>
